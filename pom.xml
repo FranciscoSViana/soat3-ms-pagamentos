@@ -168,11 +168,6 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.12</version> <!-- Use a versão mais recente -->
-				<configuration>
-					<excludes>
-						<exclude>**/lombok/*</exclude>
-					</excludes>
-				</configuration>
 				<executions>
 					<execution>
 						<goals>

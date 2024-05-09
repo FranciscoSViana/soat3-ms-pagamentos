@@ -2,7 +2,12 @@ package com.techchallenge.soat3mspagamentos.adapter.pagamento.model;
 
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.model.ClienteModel;
 import com.techchallenge.soat3mspagamentos.domain.model.enumerate.StatusPagamento;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.util.UUID;
