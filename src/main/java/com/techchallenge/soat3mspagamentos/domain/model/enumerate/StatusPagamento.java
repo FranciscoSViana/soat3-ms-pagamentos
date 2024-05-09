@@ -13,6 +13,7 @@ public enum StatusPagamento {
     AGUARDANDO_PAGAMENTO("aguardandoPagamento");
 
     private String descricao;
+
     public static StatusPagamento fromName(String name) {
         return stream(values())
                 .filter(value -> value.name().equalsIgnoreCase(name))
