@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 @Builder
 @Getter
 @Setter
-@EqualsAndHashCode
 public class PagamentoMPRequest {
 
     @JsonProperty("transaction_amount")
