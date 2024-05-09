@@ -3,6 +3,7 @@ package com.techchallenge.soat3mspagamentos.commons.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Slf4j
 public class JsonUtilImpl implements JsonUtil {
 
     private final ObjectMapper objectMapper;
@@ -60,6 +62,6 @@ public class JsonUtilImpl implements JsonUtil {
     }
 
     private void handleException(Exception e) {
-        e.printStackTrace();
+        log.info(String.valueOf(e));
     }
 }
