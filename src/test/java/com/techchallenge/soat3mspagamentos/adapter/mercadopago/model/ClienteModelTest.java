@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-public class ClienteModelTest {
+class ClienteModelTest {
 
     private ClienteModel cliente1;
     private ClienteModel cliente2;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         cliente1 = ClienteModel.builder()
                 .id(UUID.randomUUID())
                 .nome("João da Silva")
@@ -36,7 +36,7 @@ public class ClienteModelTest {
     }
 
     @Test
-    public void testConstructorWithFields() {
+    void testConstructorWithFields() {
         assertNotNull(cliente1);
         assertNotNull(cliente1.getId());
         assertEquals("João da Silva", cliente1.getNome());
@@ -46,7 +46,7 @@ public class ClienteModelTest {
     }
 
     @Test
-    public void testSettersAndGetters() {
+    void testSettersAndGetters() {
         UUID newId = UUID.randomUUID();
         cliente1.setId(newId);
         assertEquals(newId, cliente1.getId());
@@ -65,7 +65,7 @@ public class ClienteModelTest {
     }
 
     @Test
-    public void testEquality() {
+    void testEquality() {
         assertEquals(cliente1, cliente1);
 
         assertNotEquals(cliente1, cliente2);
@@ -81,7 +81,7 @@ public class ClienteModelTest {
     }
 
     @Test
-    public void testNullValues() {
+    void testNullValues() {
         ClienteModel clienteNulo = new ClienteModel();
 
         assertNull(clienteNulo.getId());
@@ -104,7 +104,7 @@ public class ClienteModelTest {
     }
 
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         assertNotNull(ClienteModel.builder());
     }
 }

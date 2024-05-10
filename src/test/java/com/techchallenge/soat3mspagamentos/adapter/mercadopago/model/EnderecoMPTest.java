@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class EnderecoMPTest {
+class EnderecoMPTest {
 
     private EnderecoMP endereco;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         endereco = EnderecoMP.builder()
                 .cep("12345-678")
                 .rua("Rua Principal")
@@ -25,7 +25,7 @@ public class EnderecoMPTest {
     }
 
     @Test
-    public void testConstructorWithFields() {
+    void testConstructorWithFields() {
         assertNotNull(endereco);
         assertEquals("12345-678", endereco.getCep());
         assertEquals("Rua Principal", endereco.getRua());
@@ -36,7 +36,7 @@ public class EnderecoMPTest {
     }
 
     @Test
-    public void testSettersAndGetters() {
+    void testSettersAndGetters() {
         endereco.setCep("98765-432");
         assertEquals("98765-432", endereco.getCep());
 
@@ -57,7 +57,7 @@ public class EnderecoMPTest {
     }
 
     @Test
-    public void testNullValues() {
+    void testNullValues() {
         EnderecoMP enderecoNulo = new EnderecoMP();
 
         assertNull(enderecoNulo.getCep());
@@ -83,7 +83,7 @@ public class EnderecoMPTest {
     }
 
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         assertNotNull(EnderecoMP.builder());
     }
 }

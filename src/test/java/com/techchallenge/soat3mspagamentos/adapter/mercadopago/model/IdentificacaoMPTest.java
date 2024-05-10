@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class IdentificacaoMPTest {
+class IdentificacaoMPTest {
 
     private IdentificacaoMP identificacao;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         identificacao = IdentificacaoMP.builder()
                 .tipoDocumento("RG")
                 .numeroDocumento("123456789")
@@ -21,14 +21,14 @@ public class IdentificacaoMPTest {
     }
 
     @Test
-    public void testConstructorWithFields() {
+    void testConstructorWithFields() {
         assertNotNull(identificacao);
         assertEquals("RG", identificacao.getTipoDocumento());
         assertEquals("123456789", identificacao.getNumeroDocumento());
     }
 
     @Test
-    public void testSettersAndGetters() {
+    void testSettersAndGetters() {
         identificacao.setTipoDocumento("CPF");
         assertEquals("CPF", identificacao.getTipoDocumento());
 
@@ -37,7 +37,7 @@ public class IdentificacaoMPTest {
     }
 
     @Test
-    public void testNullValues() {
+    void testNullValues() {
         IdentificacaoMP identificacaoNula = new IdentificacaoMP();
 
         assertNull(identificacaoNula.getTipoDocumento());
@@ -51,7 +51,7 @@ public class IdentificacaoMPTest {
     }
 
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         assertNotNull(IdentificacaoMP.builder());
     }
 }
