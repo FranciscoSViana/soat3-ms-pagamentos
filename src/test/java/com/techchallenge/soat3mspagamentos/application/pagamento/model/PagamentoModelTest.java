@@ -1,6 +1,7 @@
-package com.techchallenge.soat3mspagamentos.adapter.pagamento.model;
+package com.techchallenge.soat3mspagamentos.application.pagamento.model;
 
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.model.ClienteModel;
+import com.techchallenge.soat3mspagamentos.application.pagamento.model.PagamentoModel;
 import com.techchallenge.soat3mspagamentos.domain.model.enumerate.StatusPagamento;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
