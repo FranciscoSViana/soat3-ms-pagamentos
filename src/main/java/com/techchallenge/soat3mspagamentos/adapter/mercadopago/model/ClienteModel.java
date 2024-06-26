@@ -1,5 +1,6 @@
 package com.techchallenge.soat3mspagamentos.adapter.mercadopago.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClienteModel {
 
     @JsonProperty("id")

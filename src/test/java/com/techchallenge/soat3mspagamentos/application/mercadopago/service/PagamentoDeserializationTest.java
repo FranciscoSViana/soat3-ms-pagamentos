@@ -3,18 +3,28 @@ package com.techchallenge.soat3mspagamentos.application.mercadopago.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techchallenge.soat3mspagamentos.application.pagamento.model.PagamentoModel;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
+
+@SpringBootTest
 public class PagamentoDeserializationTest {
 
-    @Test
-    public void testPagamentoDeserialization() throws Exception {
-        String json = "{\"id\":\"ca9d304b-6cc2-480d-b64e-2417cbf354c4\",\"cliente\":{\"id\":\"eb2a8344-51fd-4490-9db4-8c42398f9e21\",\"nome\":\"João Silva\",\"cpf\":\"12345678909\",\"email\":\"joao.silva@example.com\",\"telefone\":\"11999999999\"},\"preco\":100.00,\"statusPagamento\":\"AGUARDANDO_PAGAMENTO\",\"codigoPix\":\"codigo-pix-exemplo\",\"idPagamentoMP\":null,\"qrCode\":\"\"}";
+    @Autowired
+    private ObjectMapper objectMapper;
 
-        ObjectMapper objectMapper = new ObjectMapper();
+    @Test
+    public void testDeserialization() throws Exception {
+        String json = "{\"id\":\"47d2d326-1479-469c-9df9-f16cb9060d2d\",\"cliente\":{\"id\":\"8b1910d4-046c-4d7a-b0f5-8f4d1c6db6e4\",\"nome\":\"Carlos Souza\",\"cpf\":\"45678912334\",\"email\":\"carlos.souza@example.com\",\"telefone\":\"31977777777\",\"dataHoraCriacao\":\"2024-06-25T05:32:43\",\"dataHoraAlteracao\":null,\"situacao\":true},\"preco\":1234.45,\"statusPagamento\":\"AGUARDANDO_PAGAMENTO\",\"codigoPix\":null,\"idPagamentoMP\":null,\"qrCode\":null}";
+
         PagamentoModel pagamento = objectMapper.readValue(json, PagamentoModel.class);
 
-        assertNotNull(pagamento);
+        assertThat(pagamento).isNotNull();
+        assertThat(pagamento.getId()).isNotNull();
+        assertThat(pagamento.getCliente()).isNotNull();
+        assertThat(pagamento.getPreco()).isEqualByComparingTo("1234.45");
+        assertThat(pagamento.getStatusPagamento()).isNotNull();
     }
 }

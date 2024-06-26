@@ -1,5 +1,6 @@
 package com.techchallenge.soat3mspagamentos.application.pagamento.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.model.ClienteModel;
 import com.techchallenge.soat3mspagamentos.domain.model.enumerate.StatusPagamento;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PagamentoModel {
 
     @JsonProperty("id")
@@ -32,6 +34,8 @@ public class PagamentoModel {
 
     @JsonProperty("idPagamentoMP")
     private String idPagamentoMP;
+    @JsonProperty("idPedido")
+    private UUID idPedido;
 
     @JsonProperty("qrCode")
     private byte[] qrCode;
