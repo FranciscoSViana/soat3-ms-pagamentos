@@ -3,7 +3,8 @@ package com.techchallenge.soat3mspagamentos.application.mercadopago.service;
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.MercadoPagoClient;
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.model.PagadorMP;
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.model.PagamentoMPRequest;
-import com.techchallenge.soat3mspagamentos.adapter.pagamento.model.PagamentoModel;
+import com.techchallenge.soat3mspagamentos.application.pagamento.evento.PagamentoProducer;
+import com.techchallenge.soat3mspagamentos.application.pagamento.model.PagamentoModel;
 import com.techchallenge.soat3mspagamentos.commons.utils.JsonUtil;
 import com.techchallenge.soat3mspagamentos.domain.model.enumerate.StatusPagamento;
 import lombok.RequiredArgsConstructor;
@@ -28,18 +29,20 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
 
     private final MercadoPagoClient mercadoPagoClient;
 
+    private final PagamentoProducer produtor;
+
     private final JsonUtil jsonUtil;
     @Override
-    public PagamentoModel criarPagamento(PagamentoModel pagamento) {
+    public void criarPagamento(PagamentoModel pagamento) {
 
         UUID idPagamento = UUID.randomUUID();
 
         String response = mercadoPagoClient.criarPagamento(authorization, PagamentoMPRequest.builder()
-                .valor(pagamento.getPreco())
-                .payer(PagadorMP.builder().email(pagamento.getCliente().getEmail()).build())
-                .metodoDePagamento(PIX)
-                .descricao(String.valueOf(idPagamento))
-                .build());
+                    .valor(pagamento.getPreco())
+                    .payer(PagadorMP.builder().email(pagamento.getCliente().getEmail()).build())
+                    .metodoDePagamento(PIX)
+                    .descricao(String.valueOf(idPagamento))
+                    .build());
 
         String qrCopiaCola = jsonUtil.obterValorChaveJson(response, QR_CODE);
 
@@ -57,25 +60,20 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
 
         pagamento.setIdPagamentoMP(idPagamentoMP);
 
-        return pagamento;
-    }
-
-    @Override
-    public PagamentoModel confirmarPagamento(Long idPagamento) {
-
-        String pagamentoMP =  mercadoPagoClient.confirmarPagamento(authorization, idPagamento);
-
+        String pagamentoMP =  mercadoPagoClient.confirmarPagamento(authorization, Long.parseLong(idPagamentoMP));
 
         String uuidPedido = jsonUtil.obterValorChaveJson(pagamentoMP, DESCRIPTION);
 
         String uuid = removeAspas(uuidPedido);
 
-        return PagamentoModel.builder()
-                .id(UUID.fromString(uuid))
-                .idPagamentoMP(String.valueOf(idPagamento))
-                .statusPagamento(StatusPagamento.PAGO)
-                .build();
+        pagamento.setId(UUID.fromString(uuid));
+
+        pagamento.setStatusPagamento(StatusPagamento.PAGO);
+
+        produtor.enviarPagamento(pagamento);
+
     }
+
 
 
     private String removeAspas(String palavra) {

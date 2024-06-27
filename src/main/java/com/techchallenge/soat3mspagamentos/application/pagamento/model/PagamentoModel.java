@@ -1,12 +1,10 @@
-package com.techchallenge.soat3mspagamentos.adapter.pagamento.model;
+package com.techchallenge.soat3mspagamentos.application.pagamento.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.model.ClienteModel;
 import com.techchallenge.soat3mspagamentos.domain.model.enumerate.StatusPagamento;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,20 +14,29 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PagamentoModel {
 
+    @JsonProperty("id")
     private UUID id;
 
+    @JsonProperty("cliente")
     private ClienteModel cliente;
 
+    @JsonProperty("preco")
     private BigDecimal preco;
 
+    @JsonProperty("statusPagamento")
     private StatusPagamento statusPagamento;
 
+    @JsonProperty("codigoPix")
     private String codigoPix;
 
+    @JsonProperty("idPagamentoMP")
     private String idPagamentoMP;
+    @JsonProperty("idPedido")
+    private UUID idPedido;
 
+    @JsonProperty("qrCode")
     private byte[] qrCode;
-
 }
