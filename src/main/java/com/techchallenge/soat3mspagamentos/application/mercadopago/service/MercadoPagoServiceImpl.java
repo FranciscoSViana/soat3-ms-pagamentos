@@ -37,44 +37,48 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
 
         UUID idPagamento = UUID.randomUUID();
 
-        String response = mercadoPagoClient.criarPagamento(authorization, PagamentoMPRequest.builder()
+        pagamento.setId(idPagamento);
+
+        try {
+
+            String response = mercadoPagoClient.criarPagamento(authorization, PagamentoMPRequest.builder()
                     .valor(pagamento.getPreco())
                     .payer(PagadorMP.builder().email(pagamento.getCliente().getEmail()).build())
                     .metodoDePagamento(PIX)
                     .descricao(String.valueOf(idPagamento))
                     .build());
 
-        String qrCopiaCola = jsonUtil.obterValorChaveJson(response, QR_CODE);
+            String qrCopiaCola = jsonUtil.obterValorChaveJson(response, QR_CODE);
 
-        String qrImage = jsonUtil.obterValorChaveJson(response, QR_CODE_BASE_64);
+            String qrImage = jsonUtil.obterValorChaveJson(response, QR_CODE_BASE_64);
 
-        String idPagamentoMP = jsonUtil.obterValorChaveJson(response, ID);
+            String idPagamentoMP = jsonUtil.obterValorChaveJson(response, ID);
 
-        pagamento.setId(idPagamento);
+            pagamento.setStatusPagamento(StatusPagamento.AGUARDANDO_PAGAMENTO);
 
-        pagamento.setStatusPagamento(StatusPagamento.AGUARDANDO_PAGAMENTO);
+            pagamento.setCodigoPix(qrCopiaCola);
 
-        pagamento.setCodigoPix(qrCopiaCola);
+            pagamento.setQrCode(qrImage.getBytes());
 
-        pagamento.setQrCode(qrImage.getBytes());
+            pagamento.setIdPagamentoMP(idPagamentoMP);
 
-        pagamento.setIdPagamentoMP(idPagamentoMP);
+            String pagamentoMP =  mercadoPagoClient.confirmarPagamento(authorization, Long.parseLong(idPagamentoMP));
 
-        String pagamentoMP =  mercadoPagoClient.confirmarPagamento(authorization, Long.parseLong(idPagamentoMP));
+            String uuidPedido = jsonUtil.obterValorChaveJson(pagamentoMP, DESCRIPTION);
 
-        String uuidPedido = jsonUtil.obterValorChaveJson(pagamentoMP, DESCRIPTION);
+            String uuid = removeAspas(uuidPedido);
 
-        String uuid = removeAspas(uuidPedido);
+            pagamento.setId(UUID.fromString(uuid));
 
-        pagamento.setId(UUID.fromString(uuid));
+            pagamento.setStatusPagamento(StatusPagamento.PAGO);
 
-        pagamento.setStatusPagamento(StatusPagamento.PAGO);
+            produtor.enviarPagamento(pagamento);
 
-        produtor.enviarPagamento(pagamento);
+        }catch(Exception err) {
+            produtor.enviarErroPagamento(pagamento, err.getMessage());
+        }
 
     }
-
-
 
     private String removeAspas(String palavra) {
         return palavra.replace("\"", "");
