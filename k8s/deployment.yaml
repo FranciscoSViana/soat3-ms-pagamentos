@@ -23,6 +23,10 @@ spec:
                 secretKeyRef:
                   name: pagamentos-config-secret
                   key: mp_access_token
+            - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
+              value: "kafka-service:9092"
+            - name: SPRING_KAFKA_CONSUMER_GROUP_ID
+              value: "pagamentos_grupo_id"
 ---
 apiVersion: v1
 kind: Service
