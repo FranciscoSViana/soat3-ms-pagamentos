@@ -3,7 +3,8 @@ package com.techchallenge.soat3mspagamentos.application.mercadopago.service;
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.MercadoPagoClient;
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.model.PagadorMP;
 import com.techchallenge.soat3mspagamentos.adapter.mercadopago.model.PagamentoMPRequest;
-import com.techchallenge.soat3mspagamentos.adapter.pagamento.model.PagamentoModel;
+import com.techchallenge.soat3mspagamentos.application.pagamento.evento.PagamentoProducer;
+import com.techchallenge.soat3mspagamentos.application.pagamento.model.PagamentoModel;
 import com.techchallenge.soat3mspagamentos.commons.utils.JsonUtil;
 import com.techchallenge.soat3mspagamentos.domain.model.enumerate.StatusPagamento;
 import lombok.RequiredArgsConstructor;
@@ -28,55 +29,56 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
 
     private final MercadoPagoClient mercadoPagoClient;
 
+    private final PagamentoProducer produtor;
+
     private final JsonUtil jsonUtil;
     @Override
-    public PagamentoModel criarPagamento(PagamentoModel pagamento) {
+    public void criarPagamento(PagamentoModel pagamento) {
 
         UUID idPagamento = UUID.randomUUID();
 
-        String response = mercadoPagoClient.criarPagamento(authorization, PagamentoMPRequest.builder()
-                .valor(pagamento.getPreco())
-                .payer(PagadorMP.builder().email(pagamento.getCliente().getEmail()).build())
-                .metodoDePagamento(PIX)
-                .descricao(String.valueOf(idPagamento))
-                .build());
-
-        String qrCopiaCola = jsonUtil.obterValorChaveJson(response, QR_CODE);
-
-        String qrImage = jsonUtil.obterValorChaveJson(response, QR_CODE_BASE_64);
-
-        String idPagamentoMP = jsonUtil.obterValorChaveJson(response, ID);
-
         pagamento.setId(idPagamento);
 
-        pagamento.setStatusPagamento(StatusPagamento.AGUARDANDO_PAGAMENTO);
+        try {
 
-        pagamento.setCodigoPix(qrCopiaCola);
+            String response = mercadoPagoClient.criarPagamento(authorization, PagamentoMPRequest.builder()
+                    .valor(pagamento.getPreco())
+                    .payer(PagadorMP.builder().email(pagamento.getCliente().getEmail()).build())
+                    .metodoDePagamento(PIX)
+                    .descricao(String.valueOf(idPagamento))
+                    .build());
 
-        pagamento.setQrCode(qrImage.getBytes());
+            String qrCopiaCola = jsonUtil.obterValorChaveJson(response, QR_CODE);
 
-        pagamento.setIdPagamentoMP(idPagamentoMP);
+            String qrImage = jsonUtil.obterValorChaveJson(response, QR_CODE_BASE_64);
 
-        return pagamento;
+            String idPagamentoMP = jsonUtil.obterValorChaveJson(response, ID);
+
+            pagamento.setStatusPagamento(StatusPagamento.AGUARDANDO_PAGAMENTO);
+
+            pagamento.setCodigoPix(qrCopiaCola);
+
+            pagamento.setQrCode(qrImage.getBytes());
+
+            pagamento.setIdPagamentoMP(idPagamentoMP);
+
+            String pagamentoMP =  mercadoPagoClient.confirmarPagamento(authorization, Long.parseLong(idPagamentoMP));
+
+            String uuidPedido = jsonUtil.obterValorChaveJson(pagamentoMP, DESCRIPTION);
+
+            String uuid = removeAspas(uuidPedido);
+
+            pagamento.setId(UUID.fromString(uuid));
+
+            pagamento.setStatusPagamento(StatusPagamento.PAGO);
+
+            produtor.enviarPagamento(pagamento);
+
+        }catch(Exception err) {
+            produtor.enviarErroPagamento(pagamento, err.getMessage());
+        }
+
     }
-
-    @Override
-    public PagamentoModel confirmarPagamento(Long idPagamento) {
-
-        String pagamentoMP =  mercadoPagoClient.confirmarPagamento(authorization, idPagamento);
-
-
-        String uuidPedido = jsonUtil.obterValorChaveJson(pagamentoMP, DESCRIPTION);
-
-        String uuid = removeAspas(uuidPedido);
-
-        return PagamentoModel.builder()
-                .id(UUID.fromString(uuid))
-                .idPagamentoMP(String.valueOf(idPagamento))
-                .statusPagamento(StatusPagamento.PAGO)
-                .build();
-    }
-
 
     private String removeAspas(String palavra) {
         return palavra.replace("\"", "");
